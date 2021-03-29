@@ -1,0 +1,24 @@
+{
+  "name": "calvinalkan/wp-facade",
+  "description": "A Wordpress implementation of the Laravel Facade. ",
+  "homepage": "https://github.com/calvinalkan/base-container/",
+
+  "require": {
+    "calvinalkan/interfaces": "0.1.0"
+  },
+
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Calvin Alkan",
+      "email": "calvin@snicco.de"
+    }
+
+  ],
+  "autoload": {
+    "psr-4": {
+      "WpFacade\\": "/"
+    }
+  }
+
+}
