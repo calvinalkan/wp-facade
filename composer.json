@@ -4,7 +4,12 @@
   "homepage": "https://github.com/calvinalkan/base-container/",
 
   "require": {
-    "calvinalkan/interfaces": "0.1.0"
+    "php": "^7.3",
+    "calvinalkan/interfaces": "0.1.1"
+  },
+
+  "require-dev": {
+    "mockery/mockery": "^1.4"
   },
 
   "license": "GPL-2.0-or-later",
@@ -15,6 +20,12 @@
     }
 
   ],
+
+  "suggest": {
+    "mockery/mockery": "Required if you want to use the Facade Fake Replacement for testing purposes"
+
+  },
+
   "autoload": {
     "psr-4": {
       "WpFacade\\": "/"

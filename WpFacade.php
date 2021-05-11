@@ -1,22 +1,29 @@
 <?php
+
+
+    declare(strict_types = 1);
+
+
+    namespace WpFacade;
 	
-	namespace WpFacade;
-	
+	use Contracts\ContainerAdapter;
+	use Mockery;
 	use Mockery\MockInterface;
+	use RuntimeException;
 	
 	abstract class WpFacade {
-		/** @var \BetterWpHooks\Contracts\EventContainerAdapter */
+		
+
+	    /** @var ContainerAdapter */
 		private static $container;
-		
-		
+
 		/**
 		 * The resolved object instances.
 		 *
 		 * @var array
 		 */
 		private static $resolvedInstance;
-		
-		
+
 		/**
 		 * Get the root object behind the facade.
 		 *
@@ -26,8 +33,7 @@
 			
 			return static::resolveFacadeInstance(  static::getFacadeAccessor() );
 		}
-		
-		
+
 		/**
 		 * Get the registered name of the component.
 		 *
@@ -39,9 +45,7 @@
 			
 			throw new RuntimeException( 'Facade does not implement getFacadeAccessor method.' );
 		}
-		
-		
-		
+
 		/**
 		 * Resolve the facade root instance from the container.
 		 *
@@ -75,7 +79,7 @@
 		 *
 		 * @return void
 		 */
-		public static function clearResolvedInstance( $name ) {
+		public static function clearResolvedInstance( string $name ) {
 			unset( static::$resolvedInstance[ $name ] );
 		}
 		
@@ -91,24 +95,15 @@
 		}
 		
 		
-		/**
-		 *
-		 * @return \BetterWpHooks\Contracts\EventContainerAdapter
-		 */
-		public static function getFacadeContainer(): Contracts\EventContainerAdapter {
+		public static function getFacadeContainer(): ContainerAdapter {
 			
 			return static::$container;
 			
 		}
 		
-		/**
-		 * Set the application instance.
-		 *
-		 * @param  \BetterWpHooks\Contracts\EventContainerAdapter $container
-		 *
-		 * @return void
-		 */
-		public static function setFacadeContainer( $container ) {
+		
+
+		public static function setFacadeContainer( ContainerAdapter $container ) {
 			static::$container = $container;
 		}
 		
@@ -121,7 +116,7 @@
 		 *
 		 * @return mixed
 		 *
-		 * @throws \RuntimeException
+		 * @throws RuntimeException
 		 */
 		public static function __callStatic( string $method, array $args ) {
 			
@@ -135,8 +130,7 @@
 			return $instance->$method( ...$args );
 			
 		}
-		
-		
+
 		/**
 		 * Convert the facade into a Mockery spy.
 		 *
@@ -147,14 +141,15 @@
 			if ( ! static::isMock() ) {
 				
 				$class = static::getMockableClass();
-				
-				return tap( $class ? Mockery::spy( $class ) : Mockery::spy(), function ( $spy ) {
-					static::swap( $spy );
-				} );
+
+				$spy = $class ? Mockery::spy($class) : Mockery::spy();
+                static::swap($spy);
+
+				return $spy;
+
 			}
 		}
-		
-		
+
 		/**
 		 * Initiate a partial mock on the facade.
 		 *
@@ -192,11 +187,14 @@
 		 * @return \Mockery\MockInterface
 		 */
 		protected static function createFreshMockInstance() {
-			return tap( static::createMock(), function ( $mock ) {
-				static::swap( $mock );
-				
-				$mock->shouldAllowMockingProtectedMethods();
-			} );
+
+		    $mock = static::createMock();
+		    static::swap($mock);
+		    $mock->shouldAllowMockingProtectedMethods();
+
+		    return $mock;
+
+
 		}
 		
 		/**
@@ -216,6 +214,7 @@
 		 * @return bool
 		 */
 		protected static function isMock() {
+
 			$name = static::getFacadeAccessor();
 			
 			return isset( static::$resolvedInstance[ $name ] ) &&
